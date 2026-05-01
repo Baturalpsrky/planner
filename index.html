@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -12,834 +13,424 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0a;
-    --surface: #141414;
-    --surface2: #1e1e1e;
-    --border: #2a2a2a;
-    --accent: #c8f058;
-    --accent2: #58c8f0;
-    --accent3: #f058c8;
-    --text: #f0f0f0;
-    --muted: #888;
-    --danger: #f05858;
-    --safe: env(safe-area-inset-bottom, 0px);
+    --bg:#0a0a0a; --surface:#141414; --surface2:#1e1e1e; --border:#2a2a2a;
+    --accent:#c8f058; --accent2:#58c8f0; --accent3:#f058c8;
+    --text:#f0f0f0; --muted:#888; --danger:#f05858;
+    --safe:env(safe-area-inset-bottom,0px);
   }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;height:100dvh;display:flex;flex-direction:column;overflow:hidden;user-select:none;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  .header{padding:52px 20px 12px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;flex-shrink:0;}
+  .header-date{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+  .header-day{font-size:28px;font-weight:800;line-height:1;margin-top:2px;}
+  .header-clock{font-family:'DM Mono',monospace;font-size:22px;color:var(--accent);font-weight:500;}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    user-select: none;
-  }
+  .tabs{display:flex;padding:12px 20px 0;gap:6px;background:var(--bg);flex-shrink:0;}
+  .tab{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;border-radius:8px 8px 0 0;border:1px solid transparent;border-bottom:none;color:var(--muted);background:transparent;cursor:pointer;transition:all .15s;}
+  .tab.active{color:var(--accent);background:var(--surface);border-color:var(--border);}
 
-  /* ── Header ── */
-  .header {
-    padding: 52px 20px 12px;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-shrink: 0;
-  }
-  .header-left {}
-  .header-date {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-  .header-day {
-    font-size: 28px;
-    font-weight: 800;
-    line-height: 1;
-    margin-top: 2px;
-  }
-  .header-clock {
-    font-family: 'DM Mono', monospace;
-    font-size: 22px;
-    color: var(--accent);
-    font-weight: 500;
-  }
+  .content{flex:1;overflow:hidden;background:var(--surface);border-top:1px solid var(--border);}
+  .pane{display:none;height:100%;overflow-y:auto;padding:20px;padding-bottom:calc(20px + var(--safe));}
+  .pane.active{display:block;}
 
-  /* ── Tabs ── */
-  .tabs {
-    display: flex;
-    padding: 12px 20px 0;
-    gap: 6px;
-    background: var(--bg);
-    flex-shrink: 0;
-  }
-  .tab {
-    flex: 1;
-    padding: 8px 4px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    border-radius: 8px 8px 0 0;
-    border: 1px solid transparent;
-    border-bottom: none;
-    color: var(--muted);
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .tab.active {
-    color: var(--accent);
-    background: var(--surface);
-    border-color: var(--border);
-  }
+  .ozet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+  .ozet-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;}
+  .ozet-card.full{grid-column:1/-1;}
+  .ozet-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+  .ozet-value{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;}
+  .ozet-value.a1{color:var(--accent);} .ozet-value.a2{color:var(--accent2);} .ozet-value.a3{color:var(--accent3);}
 
-  /* ── Content ── */
-  .content {
-    flex: 1;
-    overflow: hidden;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-  }
-  .pane {
-    display: none;
-    height: 100%;
-    overflow-y: auto;
-    padding: 20px;
-    padding-bottom: calc(20px + var(--safe));
-  }
-  .pane.active { display: block; }
+  .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .sec-title{font-size:10px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);}
+  .edit-btn{padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--accent);font-size:11px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;}
 
-  /* ── Özet ── */
-  .ozet-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 24px;
-  }
-  .ozet-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-  }
-  .ozet-card.full { grid-column: 1 / -1; }
-  .ozet-label {
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 4px;
-  }
-  .ozet-value {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.3;
-  }
-  .ozet-value.accent { color: var(--accent); }
-  .ozet-value.accent2 { color: var(--accent2); }
-  .ozet-value.accent3 { color: var(--accent3); }
+  .ders-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+  .ders-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);flex-shrink:0;}
+  .ders-text{font-weight:600;font-size:14px;flex:1;}
+  .ders-saat{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);}
+  .bos{color:var(--muted);font-size:14px;padding:12px 0;}
 
-  /* ── Section ── */
-  .section-title {
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
+  .ant-bugun{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:20px;position:relative;overflow:hidden;}
+  .ant-bugun::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);}
+  .ant-tip{font-size:20px;font-weight:800;margin-bottom:6px;}
+  .ant-meta{display:flex;gap:16px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);}
+  .ant-not{margin-top:10px;font-size:13px;color:var(--accent);font-weight:600;}
+  .ant-item{display:flex;align-items:center;padding:10px 14px;border-radius:10px;margin-bottom:6px;background:var(--surface2);border:1px solid var(--border);}
+  .ant-item.today{border-color:var(--accent);}
+  .ant-glabel{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);width:90px;flex-shrink:0;}
+  .ant-glabel.today{color:var(--accent);font-weight:500;}
+  .ant-gtip{font-size:13px;font-weight:600;flex:1;}
+  .ant-gsure{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
 
-  /* ── Ders listesi ── */
-  .ders-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    font-size: 14px;
-  }
-  .ders-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent2);
-    flex-shrink: 0;
-  }
-  .ders-text { font-weight: 600; flex: 1; }
-  .ders-saat {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .bos { color: var(--muted); font-size: 14px; padding: 12px 0; }
+  .gorev-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:opacity .2s;}
+  .gorev-item.done{opacity:.4;}
+  .gorev-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+  .gorev-item.done .gorev-check{background:var(--accent);border-color:var(--accent);}
+  .chk{display:none;font-size:13px;color:#000;}
+  .gorev-item.done .chk{display:block;}
+  .gorev-body{flex:1;min-width:0;}
+  .gorev-metin{font-size:14px;font-weight:600;}
+  .gorev-meta{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:2px;}
+  .odot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .oy{background:var(--danger);} .oo{background:#f0a858;} .od{background:var(--accent);}
+  .g-sil{padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:16px;cursor:pointer;flex-shrink:0;}
 
-  /* ── Antrenman ── */
-  .ant-bugun {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-  .ant-bugun::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-  }
-  .ant-tip {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-  .ant-meta {
-    display: flex;
-    gap: 16px;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .ant-not {
-    margin-top: 10px;
-    font-size: 13px;
-    color: var(--accent);
-    font-weight: 600;
-  }
+  .fab{position:fixed;bottom:calc(24px + var(--safe));right:20px;width:56px;height:56px;border-radius:16px;background:var(--accent);border:none;cursor:pointer;font-size:26px;color:#000;display:none;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(200,240,88,.3);font-weight:700;z-index:10;transition:transform .1s;}
+  .fab:active{transform:scale(.94);}
+  .fab.visible{display:flex;}
 
-  .ant-hafta-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 14px;
-    border-radius: 10px;
-    margin-bottom: 6px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-  }
-  .ant-hafta-item.bugun-item { border-color: var(--accent); }
-  .ant-gun-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    width: 90px;
-    flex-shrink: 0;
-  }
-  .ant-gun-label.bugun-label { color: var(--accent); font-weight: 500; }
-  .ant-gun-tip { font-size: 13px; font-weight: 600; flex: 1; }
-  .ant-gun-sure {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
+  .hafta-nav{display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
+  .hafta-nav::-webkit-scrollbar{display:none;}
+  .gun-chip{flex-shrink:0;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
+  .gun-chip.ag{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
 
-  /* ── Görevler ── */
-  .gorev-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .gorev-item.done { opacity: 0.4; }
-  .gorev-check {
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    border: 2px solid var(--border);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-  .gorev-item.done .gorev-check {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-  .check-icon { display: none; font-size: 13px; color: #000; }
-  .gorev-item.done .check-icon { display: block; }
-  .gorev-body { flex: 1; min-width: 0; }
-  .gorev-metin { font-size: 14px; font-weight: 600; }
-  .gorev-meta {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .oncelik-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .yuksek { background: var(--danger); }
-  .orta { background: #f0a858; }
-  .dusuk { background: var(--accent); }
+  .temizle{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:6px;}
 
-  .gorev-sil {
-    padding: 4px 8px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-size: 16px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
+  /* Modal */
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:24px 20px calc(24px + var(--safe));width:100%;max-width:480px;animation:sup .25s ease;max-height:85dvh;overflow-y:auto;}
+  @keyframes sup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .mlabel{font-size:11px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;}
+  .mtitle{font-size:18px;font-weight:800;margin-bottom:20px;}
+  .minput{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Syne',sans-serif;font-size:15px;font-weight:600;margin-bottom:16px;outline:none;-webkit-appearance:none;}
+  .minput:focus{border-color:var(--accent);}
+  .mrow{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .pill{flex:1;min-width:60px;padding:10px 8px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .1s;text-align:center;}
+  .pill.sel{background:var(--accent);border-color:var(--accent);color:#000;}
+  .mekle{width:100%;padding:14px;border-radius:12px;border:none;background:var(--accent);color:#000;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px;}
+  .miptal{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;}
 
-  /* ── FAB ── */
-  .fab {
-    position: fixed;
-    bottom: calc(24px + var(--safe));
-    right: 20px;
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    background: var(--accent);
-    border: none;
-    cursor: pointer;
-    font-size: 26px;
-    color: #000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 24px rgba(200,240,88,0.3);
-    font-weight: 700;
-    z-index: 10;
-    transition: transform 0.1s;
-  }
-  .fab:active { transform: scale(0.94); }
-  .fab.visible { display: flex; }
+  /* Edit screen */
+  .escreen{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;flex-direction:column;}
+  .escreen.open{display:flex;}
+  .ehdr{padding:52px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;flex-shrink:0;}
+  .ehdrtitle{font-size:22px;font-weight:800;}
+  .eback{padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .ebody{flex:1;overflow-y:auto;padding:20px;padding-bottom:calc(20px + var(--safe));}
 
-  /* ── Modal ── */
-  .modal-bg {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    align-items: flex-end;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  .modal-bg.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px 24px 0 0;
-    padding: 24px 20px calc(24px + var(--safe));
-    width: 100%;
-    max-width: 480px;
-    animation: slideup 0.25s ease;
-  }
-  @keyframes slideup {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-  .modal-title {
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 20px;
-  }
-  .modal-label {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-  .modal-input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    outline: none;
-    -webkit-appearance: none;
-  }
-  .modal-input:focus { border-color: var(--accent); }
-  .modal-row { display: flex; gap: 8px; margin-bottom: 16px; }
-  .pill-btn {
-    flex: 1;
-    padding: 10px 8px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.1s;
-    text-align: center;
-  }
-  .pill-btn.selected {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #000;
-  }
-  .modal-ekle {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    background: var(--accent);
-    color: #000;
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 800;
-    cursor: pointer;
-    margin-top: 4px;
-  }
-  .modal-ekle:active { opacity: 0.85; }
-  .modal-iptal {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-  }
+  /* Ders edit */
+  .egun-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;margin-top:20px;}
+  .egun-title:first-child{margin-top:0;}
+  .eitem{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;}
+  .eitem-text{flex:1;font-size:14px;font-weight:600;}
+  .eitem-sub{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+  .esil{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--danger);font-size:16px;cursor:pointer;}
+  .erow{display:flex;gap:8px;margin-top:6px;}
+  .einput{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;outline:none;-webkit-appearance:none;}
+  .einput:focus{border-color:var(--accent);}
+  .einput.sm{width:72px;flex:none;}
+  .eadd{padding:10px 16px;border-radius:10px;border:none;background:var(--accent);color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;}
 
-  /* ── Temizle btn ── */
-  .temizle-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  /* ── Haftalık nav ── */
-  .hafta-nav {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 20px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .hafta-nav::-webkit-scrollbar { display: none; }
-  .gun-chip {
-    flex-shrink: 0;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.1s;
-  }
-  .gun-chip.active-gun {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #000;
-    font-weight: 700;
-  }
-
-  .mb16 { margin-bottom: 16px; }
-  .mb24 { margin-bottom: 24px; }
+  /* Ant edit */
+  .aeitem{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;}
+  .aegun{font-size:11px;font-family:'DM Mono',monospace;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+  .aerow{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+  .aelabel{font-size:11px;color:var(--muted);width:36px;flex-shrink:0;}
+  .aeinput{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;outline:none;-webkit-appearance:none;}
+  .aeinput:focus{border-color:var(--accent);}
+  .aeinput.sm{width:70px;flex:none;}
+  .kaydet{width:100%;padding:14px;border-radius:12px;border:none;background:var(--accent);color:#000;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px;}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-left">
-    <div class="header-date" id="header-date">—</div>
-    <div class="header-day" id="header-day">—</div>
+  <div>
+    <div class="header-date" id="hdate"></div>
+    <div class="header-day" id="hday"></div>
   </div>
-  <div class="header-clock" id="header-clock">00:00</div>
+  <div class="header-clock" id="hclock">00:00</div>
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('bugun')">Bugün</button>
-  <button class="tab" onclick="switchTab('antrenman')">Antrenman</button>
-  <button class="tab" onclick="switchTab('gorevler')">Görevler</button>
+  <button class="tab active" onclick="go('bugun')">Bugün</button>
+  <button class="tab" onclick="go('antrenman')">Antrenman</button>
+  <button class="tab" onclick="go('gorevler')">Görevler</button>
 </div>
 
 <div class="content">
-
-  <!-- BUGÜN -->
   <div class="pane active" id="pane-bugun">
-    <div class="ozet-grid" id="ozet-grid"></div>
-    <div class="section-title mb16">Bugünün Dersleri</div>
+    <div class="ozet-grid" id="ozet"></div>
+    <div class="sec-hdr">
+      <div class="sec-title">Bugünün Dersleri</div>
+      <button class="edit-btn" onclick="openDersEdit()">Düzenle</button>
+    </div>
     <div id="bugun-dersler"></div>
   </div>
 
-  <!-- ANTRENMAN -->
   <div class="pane" id="pane-antrenman">
-    <div id="ant-bugun-box"></div>
-    <div class="section-title mb16">Haftalık Plan</div>
-    <div id="ant-hafta-list"></div>
+    <div id="ant-bugun"></div>
+    <div class="sec-hdr">
+      <div class="sec-title">Haftalık Plan</div>
+      <button class="edit-btn" onclick="openAntEdit()">Düzenle</button>
+    </div>
+    <div id="ant-hafta"></div>
   </div>
 
-  <!-- GÖREVLER -->
   <div class="pane" id="pane-gorevler">
-    <div class="hafta-nav" id="hafta-nav"></div>
-    <div id="gorev-list"></div>
-    <button class="temizle-btn" onclick="temizleTamamlananlar()">
-      <span>✓</span> Tamamlananları sil
-    </button>
+    <div class="hafta-nav" id="gnav"></div>
+    <div id="glist"></div>
+    <button class="temizle" onclick="temizle()">✓ Tamamlananları sil</button>
   </div>
-
 </div>
 
-<!-- FAB -->
-<button class="fab" id="fab" onclick="modalAc()">+</button>
+<button class="fab" id="fab" onclick="openModal()">+</button>
 
-<!-- MODAL -->
-<div class="modal-bg" id="modal-bg" onclick="modalKapat(event)">
+<!-- Görev Modal -->
+<div class="modal-bg" id="mbg" onclick="closeModal(event)">
   <div class="modal">
-    <div class="modal-title">Yeni Görev</div>
-    <div class="modal-label">Görev</div>
-    <input class="modal-input" id="gorev-input" type="text" placeholder="Ne yapacaksın?" autocomplete="off">
-    <div class="modal-label">Gün</div>
-    <div class="modal-row" id="gun-pills"></div>
-    <div class="modal-label" style="margin-top:4px">Öncelik</div>
-    <div class="modal-row">
-      <button class="pill-btn" data-oncelik="yüksek" onclick="seçOncelik(this)">Yüksek</button>
-      <button class="pill-btn selected" data-oncelik="orta" onclick="seçOncelik(this)">Orta</button>
-      <button class="pill-btn" data-oncelik="düşük" onclick="seçOncelik(this)">Düşük</button>
+    <div class="mtitle">Yeni Görev</div>
+    <div class="mlabel">Görev</div>
+    <input class="minput" id="ginput" type="text" placeholder="Ne yapacaksın?" autocomplete="off">
+    <div class="mlabel">Gün</div>
+    <div class="mrow" id="gpills"></div>
+    <div class="mlabel">Öncelik</div>
+    <div class="mrow">
+      <button class="pill" data-o="yüksek" onclick="pickO(this)">Yüksek</button>
+      <button class="pill sel" data-o="orta" onclick="pickO(this)">Orta</button>
+      <button class="pill" data-o="düşük" onclick="pickO(this)">Düşük</button>
     </div>
-    <button class="modal-ekle" onclick="gorevEkle()">Ekle</button>
-    <button class="modal-iptal" onclick="modalKapat()">İptal</button>
+    <button class="mekle" onclick="addGorev()">Ekle</button>
+    <button class="miptal" onclick="closeModal()">İptal</button>
   </div>
+</div>
+
+<!-- Ders Düzenle -->
+<div class="escreen" id="ders-screen">
+  <div class="ehdr">
+    <div class="ehdrtitle">Ders Programı</div>
+    <button class="eback" onclick="closeDersEdit()">Kaydet & Kapat</button>
+  </div>
+  <div class="ebody" id="ders-body"></div>
+</div>
+
+<!-- Antrenman Düzenle -->
+<div class="escreen" id="ant-screen">
+  <div class="ehdr">
+    <div class="ehdrtitle">Antrenman Planı</div>
+    <button class="eback" onclick="saveAnt()">Kaydet & Kapat</button>
+  </div>
+  <div class="ebody" id="ant-body"></div>
 </div>
 
 <script>
-const GUNLER = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
-const AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const G=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+const AY=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 
-const DEFAULT = {
-  dersler: {
-    'Pazartesi':  [{ders:'COMP201 Algoritmalar', saat:'09:00'},{ders:'MATH301 Lineer Cebir',saat:'13:00'}],
-    'Salı':       [{ders:'COMP301 İşletim Sistemleri',saat:'10:30'},{ders:'PHYS201 Fizik',saat:'14:00'}],
-    'Çarşamba':   [{ders:'COMP201 Algoritmalar',saat:'09:00'},{ders:'COMP401 Bilgisayar Ağları',saat:'16:00'}],
-    'Perşembe':   [{ders:'MATH301 Lineer Cebir',saat:'11:00'},{ders:'COMP301 İşletim Sistemleri',saat:'15:00'}],
-    'Cuma':       [{ders:'COMP401 Bilgisayar Ağları',saat:'09:00'}],
-    'Cumartesi':  [],
-    'Pazar':      []
+const DEF={
+  dersler:{
+    'Pazartesi':[{ders:'COMP201 Algoritmalar',saat:'09:00'},{ders:'MATH301 Lineer Cebir',saat:'13:00'}],
+    'Salı':[{ders:'COMP301 İşletim Sistemleri',saat:'10:30'},{ders:'PHYS201 Fizik',saat:'14:00'}],
+    'Çarşamba':[{ders:'COMP201 Algoritmalar',saat:'09:00'},{ders:'COMP401 Bilgisayar Ağları',saat:'16:00'}],
+    'Perşembe':[{ders:'MATH301 Lineer Cebir',saat:'11:00'},{ders:'COMP301 İşletim Sistemleri',saat:'15:00'}],
+    'Cuma':[{ders:'COMP401 Bilgisayar Ağları',saat:'09:00'}],
+    'Cumartesi':[],'Pazar':[]
   },
-  antrenman: {
-    'Pazartesi':  {tip:'Push — Göğüs / Omuz / Triceps', sure:60, not:'Bench press PR dene'},
-    'Salı':       {tip:'Pull — Sırt / Biceps', sure:55, not:''},
-    'Çarşamba':   {tip:'Legs — Bacak / Core', sure:65, not:'Squat odaklı'},
-    'Perşembe':   {tip:'Push — Göğüs / Omuz / Triceps', sure:60, not:''},
-    'Cuma':       {tip:'Pull — Sırt / Biceps', sure:55, not:''},
-    'Cumartesi':  {tip:'Legs + Kardiyo', sure:70, not:'Uzun yürüyüş ekle'},
-    'Pazar':      {tip:'Dinlenme', sure:0, not:'Esneme & aktif dinlenme'}
+  antrenman:{
+    'Pazartesi':{tip:'Push — Göğüs / Omuz / Triceps',sure:60,not:'Bench press PR dene'},
+    'Salı':{tip:'Pull — Sırt / Biceps',sure:55,not:''},
+    'Çarşamba':{tip:'Legs — Bacak / Core',sure:65,not:'Squat odaklı'},
+    'Perşembe':{tip:'Push — Göğüs / Omuz / Triceps',sure:60,not:''},
+    'Cuma':{tip:'Pull — Sırt / Biceps',sure:55,not:''},
+    'Cumartesi':{tip:'Legs + Kardiyo',sure:70,not:'Uzun yürüyüş ekle'},
+    'Pazar':{tip:'Dinlenme',sure:0,not:'Esneme & aktif dinlenme'}
   },
-  gorevler: []
+  gorevler:[]
 };
 
-function yukle() {
-  try {
-    const raw = localStorage.getItem('planner_v2');
-    if (raw) {
-      const d = JSON.parse(raw);
-      if (!d.dersler) d.dersler = DEFAULT.dersler;
-      if (!d.antrenman) d.antrenman = DEFAULT.antrenman;
-      if (!d.gorevler) d.gorevler = [];
-      return d;
-    }
-  } catch(e) {}
-  return JSON.parse(JSON.stringify(DEFAULT));
+function load(){
+  try{const r=localStorage.getItem('planner_v2');if(r){const d=JSON.parse(r);if(!d.dersler)d.dersler=DEF.dersler;if(!d.antrenman)d.antrenman=DEF.antrenman;if(!d.gorevler)d.gorevler=[];return d;}}catch(e){}
+  return JSON.parse(JSON.stringify(DEF));
+}
+function save(){localStorage.setItem('planner_v2',JSON.stringify(D));}
+
+let D=load(), tab='bugun', selGun=null, selO='orta';
+
+function today(){const i=new Date().getDay();return G[i===0?6:i-1];}
+
+function clockTick(){
+  const n=new Date();
+  document.getElementById('hclock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+}
+function initHeader(){
+  const n=new Date();
+  document.getElementById('hday').textContent=today();
+  document.getElementById('hdate').textContent=n.getDate()+' '+AY[n.getMonth()]+' '+n.getFullYear();
 }
 
-function kaydet(d) {
-  localStorage.setItem('planner_v2', JSON.stringify(d));
+function go(t){
+  tab=t;
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['bugun','antrenman','gorevler'][i]===t));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pane-'+t).classList.add('active');
+  document.getElementById('fab').classList.toggle('visible',t==='gorevler');
+  if(t==='bugun')rBugun();
+  if(t==='antrenman')rAnt();
+  if(t==='gorevler')rGorev();
 }
 
-let DATA = yukle();
-let aktifTab = 'bugun';
-let seciliGun = null;
-let seciliOncelik = 'orta';
-
-function bugunGun() {
-  const idx = new Date().getDay();
-  return GUNLER[idx === 0 ? 6 : idx - 1];
+function rBugun(){
+  const td=today(),dl=D.dersler[td]||[],a=D.antrenman[td]||{};
+  const gs=D.gorevler.filter(g=>g.gun===td||g.gun==='Tüm hafta');
+  const tm=gs.filter(g=>g.tamamlandi).length;
+  document.getElementById('ozet').innerHTML=`
+    <div class="ozet-card"><div class="ozet-label">Dersler</div><div class="ozet-value a2">${dl.length?dl.length+' ders':'Ders yok'}</div></div>
+    <div class="ozet-card"><div class="ozet-label">Görevler</div><div class="ozet-value a3">${tm}/${gs.length} tamam</div></div>
+    <div class="ozet-card full"><div class="ozet-label">Antrenman</div><div class="ozet-value a1">${a.tip||'—'}${a.sure?' · '+a.sure+' dk':''}</div></div>`;
+  document.getElementById('bugun-dersler').innerHTML=dl.length
+    ?dl.map(d=>`<div class="ders-item"><div class="ders-dot"></div><div class="ders-text">${d.ders}</div><div class="ders-saat">${d.saat}</div></div>`).join('')
+    :'<div class="bos">Bugün ders yok 🎉</div>';
 }
 
-// ── Clock ──
-function saatGuncelle() {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('header-clock').textContent = h + ':' + m;
-}
-
-function headerGuncelle() {
-  const now = new Date();
-  const bugun = bugunGun();
-  document.getElementById('header-day').textContent = bugun;
-  document.getElementById('header-date').textContent =
-    now.getDate() + ' ' + AY[now.getMonth()] + ' ' + now.getFullYear();
-}
-
-// ── Tabs ──
-function switchTab(tab) {
-  aktifTab = tab;
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    t.classList.toggle('active', ['bugun','antrenman','gorevler'][i] === tab);
-  });
-  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
-  document.getElementById('pane-' + tab).classList.add('active');
-  document.getElementById('fab').classList.toggle('visible', tab === 'gorevler');
-  if (tab === 'bugun') renderBugun();
-  if (tab === 'antrenman') renderAntrenman();
-  if (tab === 'gorevler') renderGorevler();
-}
-
-// ── BUGÜN ──
-function renderBugun() {
-  const bugun = bugunGun();
-  const dersler = DATA.dersler[bugun] || [];
-  const ant = DATA.antrenman[bugun] || {};
-  const gorevler = DATA.gorevler.filter(g => g.gun === bugun || g.gun === 'Tüm hafta');
-  const tam = gorevler.filter(g => g.tamamlandi).length;
-
-  const grid = document.getElementById('ozet-grid');
-  grid.innerHTML = `
-    <div class="ozet-card">
-      <div class="ozet-label">Dersler</div>
-      <div class="ozet-value accent2">${dersler.length > 0 ? dersler.length + ' ders' : 'Ders yok'}</div>
-    </div>
-    <div class="ozet-card">
-      <div class="ozet-label">Görevler</div>
-      <div class="ozet-value accent3">${tam}/${gorevler.length} tamam</div>
-    </div>
-    <div class="ozet-card full">
-      <div class="ozet-label">Antrenman</div>
-      <div class="ozet-value accent">${ant.tip || '—'}${ant.sure ? ' · ' + ant.sure + ' dk' : ''}</div>
-    </div>
-  `;
-
-  const box = document.getElementById('bugun-dersler');
-  if (dersler.length === 0) {
-    box.innerHTML = '<div class="bos">Bugün ders yok 🎉</div>';
-  } else {
-    box.innerHTML = dersler.map(d => `
-      <div class="ders-item">
-        <div class="ders-dot"></div>
-        <div class="ders-text">${d.ders}</div>
-        <div class="ders-saat">${d.saat}</div>
-      </div>
-    `).join('');
-  }
-}
-
-// ── ANTRENMAN ──
-function renderAntrenman() {
-  const bugun = bugunGun();
-  const ant = DATA.antrenman[bugun] || {};
-
-  document.getElementById('ant-bugun-box').innerHTML = `
-    <div class="ant-bugun mb24">
-      <div class="section-title" style="margin-bottom:10px">Bugün — ${bugun}</div>
-      <div class="ant-tip">${ant.tip || '—'}</div>
-      <div class="ant-meta">
-        ${ant.sure > 0 ? `<span>⏱ ${ant.sure} dk</span>` : '<span>Dinlenme günü</span>'}
-      </div>
-      ${ant.not ? `<div class="ant-not">→ ${ant.not}</div>` : ''}
-    </div>
-  `;
-
-  document.getElementById('ant-hafta-list').innerHTML = GUNLER.map(g => {
-    const a = DATA.antrenman[g] || {};
-    const isBugun = g === bugun;
-    return `
-      <div class="ant-hafta-item${isBugun ? ' bugun-item' : ''}">
-        <div class="ant-gun-label${isBugun ? ' bugun-label' : ''}">${g}${isBugun ? ' ◀' : ''}</div>
-        <div class="ant-gun-tip">${a.tip || '—'}</div>
-        ${a.sure > 0 ? `<div class="ant-gun-sure">${a.sure}dk</div>` : ''}
-      </div>
-    `;
+function rAnt(){
+  const td=today(),a=D.antrenman[td]||{};
+  document.getElementById('ant-bugun').innerHTML=`
+    <div class="ant-bugun" style="margin-bottom:20px">
+      <div class="ant-tip">${a.tip||'—'}</div>
+      <div class="ant-meta">${a.sure>0?`<span>⏱ ${a.sure} dk</span>`:'<span>Dinlenme günü</span>'}</div>
+      ${a.not?`<div class="ant-not">→ ${a.not}</div>`:''}
+    </div>`;
+  document.getElementById('ant-hafta').innerHTML=G.map(g=>{
+    const x=D.antrenman[g]||{},isTd=g===td;
+    return `<div class="ant-item${isTd?' today':''}">
+      <div class="ant-glabel${isTd?' today':''}">${g}${isTd?' ◀':''}</div>
+      <div class="ant-gtip">${x.tip||'—'}</div>
+      ${x.sure>0?`<div class="ant-gsure">${x.sure}dk</div>`:''}
+    </div>`;
   }).join('');
 }
 
-// ── GÖREVLER ──
-function renderGorevler() {
-  const bugun = bugunGun();
-  if (!seciliGun) seciliGun = bugun;
-
-  // Hafta nav
-  const nav = document.getElementById('hafta-nav');
-  nav.innerHTML = ['Tüm hafta', ...GUNLER].map(g => `
-    <button class="gun-chip${g === seciliGun ? ' active-gun' : ''}" onclick="gunSec('${g}')">${g}</button>
-  `).join('');
-
-  // Görev listesi
-  const filtered = DATA.gorevler.filter(g =>
-    seciliGun === 'Tüm hafta' ? true : (g.gun === seciliGun || g.gun === 'Tüm hafta')
-  );
-
-  const list = document.getElementById('gorev-list');
-  if (filtered.length === 0) {
-    list.innerHTML = '<div class="bos">Bu gün için görev yok. + ile ekle.</div>';
-    return;
-  }
-
-  list.innerHTML = filtered.map((g, i) => {
-    const realIdx = DATA.gorevler.indexOf(g);
-    const renkClass = {yüksek:'yuksek', orta:'orta', 'düşük':'dusuk'}[g.oncelik] || 'orta';
-    return `
-      <div class="gorev-item${g.tamamlandi ? ' done' : ''}" onclick="toggleGorev(${realIdx})">
-        <div class="gorev-check"><span class="check-icon">✓</span></div>
-        <div class="gorev-body">
-          <div class="gorev-metin">${g.metin}</div>
-          <div class="gorev-meta">${g.gun} · ${g.oncelik}</div>
-        </div>
-        <div class="oncelik-dot ${renkClass}"></div>
-        <button class="gorev-sil" onclick="event.stopPropagation(); silGorev(${realIdx})">×</button>
-      </div>
-    `;
+function rGorev(){
+  const td=today();
+  if(!selGun)selGun=td;
+  document.getElementById('gnav').innerHTML=['Tüm hafta',...G].map(g=>
+    `<button class="gun-chip${g===selGun?' ag':''}" onclick="pickGun('${g}')">${g.slice(0,3)}</button>`
+  ).join('');
+  const fl=D.gorevler.filter(g=>selGun==='Tüm hafta'?true:(g.gun===selGun||g.gun==='Tüm hafta'));
+  const el=document.getElementById('glist');
+  if(!fl.length){el.innerHTML='<div class="bos">Bu gün için görev yok. + ile ekle.</div>';return;}
+  el.innerHTML=fl.map(g=>{
+    const ri=D.gorevler.indexOf(g);
+    const rc={yüksek:'oy',orta:'oo','düşük':'od'}[g.oncelik]||'oo';
+    return `<div class="gorev-item${g.tamamlandi?' done':''}" onclick="togG(${ri})">
+      <div class="gorev-check"><span class="chk">✓</span></div>
+      <div class="gorev-body"><div class="gorev-metin">${g.metin}</div><div class="gorev-meta">${g.gun} · ${g.oncelik}</div></div>
+      <div class="odot ${rc}"></div>
+      <button class="g-sil" onclick="event.stopPropagation();delG(${ri})">×</button>
+    </div>`;
   }).join('');
 }
 
-function gunSec(gun) {
-  seciliGun = gun;
-  renderGorevler();
+function pickGun(g){selGun=g;rGorev();}
+function togG(i){D.gorevler[i].tamamlandi=!D.gorevler[i].tamamlandi;save();rGorev();if(tab==='bugun')rBugun();}
+function delG(i){D.gorevler.splice(i,1);save();rGorev();if(tab==='bugun')rBugun();}
+function temizle(){D.gorevler=D.gorevler.filter(g=>!g.tamamlandi);save();rGorev();if(tab==='bugun')rBugun();}
+
+function openModal(){
+  const td=today();
+  if(!selGun||selGun==='Tüm hafta')selGun=td;
+  document.getElementById('gpills').innerHTML=[...G,'Tüm hafta'].map(g=>
+    `<button class="pill${g===selGun?' sel':''}" onclick="pickGP(this,'${g}')">${g.slice(0,3)}</button>`
+  ).join('');
+  selO='orta';
+  document.querySelectorAll('[data-o]').forEach(b=>b.classList.toggle('sel',b.dataset.o==='orta'));
+  document.getElementById('ginput').value='';
+  document.getElementById('mbg').classList.add('open');
+  setTimeout(()=>document.getElementById('ginput').focus(),300);
+}
+function closeModal(e){if(!e||e.target===document.getElementById('mbg'))document.getElementById('mbg').classList.remove('open');}
+function pickGP(b,g){selGun=g;document.querySelectorAll('#gpills .pill').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');}
+function pickO(b){selO=b.dataset.o;document.querySelectorAll('[data-o]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');}
+function addGorev(){
+  const m=document.getElementById('ginput').value.trim();
+  if(!m){document.getElementById('ginput').style.borderColor='var(--danger)';return;}
+  D.gorevler.push({metin:m,gun:selGun||today(),oncelik:selO,tamamlandi:false});
+  save();document.getElementById('mbg').classList.remove('open');
+  rGorev();if(tab==='bugun')rBugun();
 }
 
-function toggleGorev(idx) {
-  DATA.gorevler[idx].tamamlandi = !DATA.gorevler[idx].tamamlandi;
-  kaydet(DATA);
-  renderGorevler();
-  if (aktifTab === 'bugun') renderBugun();
+// ── DERS DÜZENLE ──
+function openDersEdit(){
+  const body=document.getElementById('ders-body');
+  body.innerHTML=G.map(gun=>{
+    const dl=D.dersler[gun]||[];
+    return `<div class="egun-title">${gun}</div>
+      <div id="dl-${gun}">${dl.length?dl.map((d,i)=>`
+        <div class="eitem">
+          <div class="eitem-text">${d.ders} <span class="eitem-sub">${d.saat}</span></div>
+          <button class="esil" onclick="delDers('${gun}',${i})">×</button>
+        </div>`).join(''):'<div class="bos" style="font-size:13px">Ders yok</div>'}</div>
+      <div class="erow">
+        <input class="einput" id="di-${gun}" type="text" placeholder="Ders adı (COMP301 Ağlar)" autocomplete="off">
+        <input class="einput sm" id="ds-${gun}" type="text" placeholder="09:00">
+        <button class="eadd" onclick="addDers('${gun}')">+</button>
+      </div>`;
+  }).join('');
+  document.getElementById('ders-screen').classList.add('open');
+}
+function closeDersEdit(){
+  document.getElementById('ders-screen').classList.remove('open');
+  rBugun();
+}
+function addDers(gun){
+  const ad=document.getElementById('di-'+gun).value.trim();
+  const st=document.getElementById('ds-'+gun).value.trim()||'00:00';
+  if(!ad)return;
+  if(!D.dersler[gun])D.dersler[gun]=[];
+  D.dersler[gun].push({ders:ad,saat:st});
+  save();
+  document.getElementById('di-'+gun).value='';
+  document.getElementById('ds-'+gun).value='';
+  refreshDersList(gun);
+}
+function delDers(gun,i){
+  D.dersler[gun].splice(i,1);save();refreshDersList(gun);
+}
+function refreshDersList(gun){
+  const dl=D.dersler[gun]||[];
+  document.getElementById('dl-'+gun).innerHTML=dl.length
+    ?dl.map((d,i)=>`<div class="eitem"><div class="eitem-text">${d.ders} <span class="eitem-sub">${d.saat}</span></div><button class="esil" onclick="delDers('${gun}',${i})">×</button></div>`).join('')
+    :'<div class="bos" style="font-size:13px">Ders yok</div>';
 }
 
-function silGorev(idx) {
-  DATA.gorevler.splice(idx, 1);
-  kaydet(DATA);
-  renderGorevler();
-  if (aktifTab === 'bugun') renderBugun();
+// ── ANTRENMAN DÜZENLE ──
+function openAntEdit(){
+  document.getElementById('ant-body').innerHTML=G.map(g=>{
+    const a=D.antrenman[g]||{tip:'',sure:0,not:''};
+    return `<div class="aeitem">
+      <div class="aegun">${g}</div>
+      <div class="aerow"><div class="aelabel">Tip</div><input class="aeinput" id="at-${g}" value="${a.tip}" placeholder="Push / Pull / Dinlenme..."></div>
+      <div class="aerow"><div class="aelabel">Süre</div><input class="aeinput sm" id="as-${g}" type="number" value="${a.sure}" placeholder="0"><span style="font-size:12px;color:var(--muted);margin-left:6px">dk</span></div>
+      <div class="aerow"><div class="aelabel">Not</div><input class="aeinput" id="an-${g}" value="${a.not}" placeholder="Opsiyonel not..."></div>
+    </div>`;
+  }).join('');
+  document.getElementById('ant-screen').classList.add('open');
 }
-
-function temizleTamamlananlar() {
-  DATA.gorevler = DATA.gorevler.filter(g => !g.tamamlandi);
-  kaydet(DATA);
-  renderGorevler();
-  if (aktifTab === 'bugun') renderBugun();
-}
-
-// ── MODAL ──
-function modalAc() {
-  const bugun = bugunGun();
-  if (!seciliGun || seciliGun === 'Tüm hafta') seciliGun = bugun;
-
-  const pills = document.getElementById('gun-pills');
-  pills.innerHTML = [...GUNLER, 'Tüm hafta'].map(g => `
-    <button class="pill-btn${g === seciliGun ? ' selected' : ''}" onclick="seçGun(this,'${g}')">${g.slice(0,3)}</button>
-  `).join('');
-
-  seciliOncelik = 'orta';
-  document.querySelectorAll('[data-oncelik]').forEach(b => {
-    b.classList.toggle('selected', b.dataset.oncelik === 'orta');
+function saveAnt(){
+  G.forEach(g=>{
+    D.antrenman[g]={
+      tip:document.getElementById('at-'+g).value.trim(),
+      sure:parseInt(document.getElementById('as-'+g).value)||0,
+      not:document.getElementById('an-'+g).value.trim()
+    };
   });
-
-  document.getElementById('gorev-input').value = '';
-  document.getElementById('modal-bg').classList.add('open');
-  setTimeout(() => document.getElementById('gorev-input').focus(), 300);
+  save();
+  document.getElementById('ant-screen').classList.remove('open');
+  rAnt();
 }
 
-function modalKapat(e) {
-  if (!e || e.target === document.getElementById('modal-bg')) {
-    document.getElementById('modal-bg').classList.remove('open');
-  }
-}
-
-function seçGun(btn, gun) {
-  seciliGun = gun;
-  document.querySelectorAll('#gun-pills .pill-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-}
-
-function seçOncelik(btn) {
-  seciliOncelik = btn.dataset.oncelik;
-  document.querySelectorAll('[data-oncelik]').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-}
-
-function gorevEkle() {
-  const metin = document.getElementById('gorev-input').value.trim();
-  if (!metin) {
-    document.getElementById('gorev-input').style.borderColor = 'var(--danger)';
-    return;
-  }
-  DATA.gorevler.push({ metin, gun: seciliGun || bugunGun(), oncelik: seciliOncelik, tamamlandi: false });
-  kaydet(DATA);
-  document.getElementById('modal-bg').classList.remove('open');
-  renderGorevler();
-  if (aktifTab === 'bugun') renderBugun();
-}
-
-// ── Enter tuşu ──
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('modal-bg').classList.contains('open')) gorevEkle();
-  if (e.key === 'Escape') modalKapat();
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('mbg').classList.contains('open'))addGorev();
+  if(e.key==='Escape')closeModal();
 });
 
-// ── Init ──
-headerGuncelle();
-saatGuncelle();
-setInterval(saatGuncelle, 10000);
-renderBugun();
+initHeader();clockTick();setInterval(clockTick,10000);rBugun();
 
-// ── Service Worker ──
-if ('serviceWorker' in navigator) {
-  const sw = `
-    const CACHE = 'planner-v1';
-    self.addEventListener('install', e => {
-      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html'])));
-    });
-    self.addEventListener('fetch', e => {
-      e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
-    });
-  `;
-  const blob = new Blob([sw], {type: 'application/javascript'});
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
+if('serviceWorker'in navigator){
+  const sw=`const C='pv3';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
 }
 </script>
 </body>
